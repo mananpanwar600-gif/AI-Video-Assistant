@@ -463,7 +463,7 @@ with st.sidebar:
     st.markdown("""
     <div class="sidebar-brand">
         <div class="brand-icon">🎬</div>
-        <div class="hero-title" style="font-size:1.35rem">Video<br>Assistant</div>
+        <div class="hero-title" style="font-size:1.35rem">VISTA<br>AI</div>
     </div>
     <div class="sidebar-caption">Your AI-powered meeting workspace</div>
     <div class="section-label">New analysis</div>
