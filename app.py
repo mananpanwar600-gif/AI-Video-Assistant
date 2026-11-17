@@ -11,7 +11,7 @@ load_dotenv()
 
 # ─── Page Config ────────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="AI Video Assistant",
+    page_title="VISTA AI",
     page_icon="🎬",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -300,6 +300,135 @@ label { color: var(--text-muted) !important; font-size: 0.8rem !important; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ── Workspace polish ── */
+.block-container {
+    max-width: 1440px;
+    padding-top: 2.5rem;
+    padding-bottom: 4rem;
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #11111b 0%, #0d0d14 100%) !important;
+}
+
+[data-testid="stSidebar"] > div:first-child {
+    padding: 1.5rem 1.15rem;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.35rem;
+}
+
+.brand-icon {
+    display: grid;
+    place-items: center;
+    width: 2.7rem;
+    height: 2.7rem;
+    border: 1px solid rgba(159, 103, 255, 0.35);
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(124, 58, 237, 0.3), rgba(6, 182, 212, 0.12));
+    font-size: 1.25rem;
+}
+
+.sidebar-caption {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    line-height: 1.6;
+    margin: 0 0 1.25rem 3.45rem;
+}
+
+.section-label {
+    color: #8888ad;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    margin: 1.1rem 0 0.55rem;
+    text-transform: uppercase;
+}
+
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin: 0.5rem 0 1.5rem;
+}
+
+.app-eyebrow {
+    color: var(--accent-glow);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.header-status {
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: rgba(26, 26, 37, 0.8);
+    color: #b7b7cc;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    padding: 0.45rem 0.8rem;
+    white-space: nowrap;
+}
+
+.card {
+    background: linear-gradient(145deg, rgba(22, 22, 32, 0.98), rgba(17, 17, 24, 0.98));
+    border-radius: 14px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 0.4rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.stTabs [data-baseweb="tab"] {
+    height: 3rem;
+    border-radius: 9px 9px 0 0;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.stTabs [aria-selected="true"] {
+    color: #fff !important;
+}
+
+.stTabs [data-baseweb="tab-highlight"] {
+    background-color: var(--accent-glow);
+}
+
+.stTextInput > div > div > input,
+.stSelectbox [data-baseweb="select"] > div {
+    min-height: 2.8rem;
+}
+
+.stButton > button {
+    min-height: 2.8rem;
+}
+
+@media (max-width: 768px) {
+    .block-container {
+        padding: 1.25rem 1rem 2rem;
+    }
+
+    .app-header {
+        flex-direction: column;
+    }
+
+    .card {
+        padding: 1.1rem;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -331,20 +460,25 @@ def render_step_bar(label: str, key: str, icon: str):
 
 # ─── Sidebar ────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown('<div class="hero-title" style="font-size:1.6rem">🎬 AI<br>Video</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-sub">Meeting Intelligence</div>', unsafe_allow_html=True)
-    st.markdown("---")
+    st.markdown("""
+    <div class="sidebar-brand">
+        <div class="brand-icon">🎬</div>
+        <div class="hero-title" style="font-size:1.35rem">Video<br>Assistant</div>
+    </div>
+    <div class="sidebar-caption">Your AI-powered meeting workspace</div>
+    <div class="section-label">New analysis</div>
+    """, unsafe_allow_html=True)
 
-    st.markdown('<span class="badge badge-purple">Input</span>', unsafe_allow_html=True)
-    source = st.text_input("YouTube URL or File Path", placeholder="https://youtube.com/watch?v=... or /path/to/file.mp4")
-
-    language = st.selectbox("Language", ["english", "hinglish"], index=0)
-
-    run_btn = st.button("⚡  Analyse", use_container_width=True)
+    source = st.text_input(
+        "Video source",
+        placeholder="Paste a YouTube URL or file path",
+        help="Use a public YouTube URL or a video file accessible to this app.",
+    )
+    language = st.selectbox("Transcript language", ["english", "hinglish"], index=0)
+    run_btn = st.button("✨  Analyse video", use_container_width=True)
 
     if st.session_state.pipeline_done:
-        st.markdown("---")
-        st.markdown('<span class="badge badge-green">Pipeline Status</span>', unsafe_allow_html=True)
+        st.markdown('<div class="section-label">Analysis pipeline</div>', unsafe_allow_html=True)
         for step, icon, label in [
             ("audio",      "🔊", "Audio Processing"),
             ("transcript", "📝", "Transcription"),
@@ -356,9 +490,16 @@ with st.sidebar:
             render_step_bar(label, step, icon)
 
 # ─── Main Area ──────────────────────────────────────────────────────────────────
-st.markdown('<div class="hero-title">AI Video Assistant</div>', unsafe_allow_html=True)
-st.markdown('<div class="hero-sub">Transcribe · Summarise · Chat with your meetings</div>', unsafe_allow_html=True)
-st.markdown("---")
+st.markdown("""
+<div class="app-header">
+    <div>
+        <div class="app-eyebrow">Meeting intelligence workspace</div>
+        <div class="hero-title">Turn conversations<br>into clear next steps.</div>
+        <div class="hero-sub">Transcribe · Summarise · Ask your video</div>
+    </div>
+    <div class="header-status">● &nbsp; AI workspace</div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Run Pipeline ────────────────────────────────────────────────────────────────
 if run_btn:
@@ -371,13 +512,35 @@ if run_btn:
         st.session_state.pipeline_steps = {}
 
         progress_placeholder = st.empty()
+        progress_label = st.empty()
+        progress_bar = st.progress(0)
+        pipeline_stages = [
+            ("audio", "Processing audio"),
+            ("transcript", "Transcribing video"),
+            ("title", "Generating session title"),
+            ("summary", "Writing summary"),
+            ("extract", "Extracting meeting insights"),
+            ("rag", "Preparing Ask AI"),
+        ]
+        stage_positions = {
+            key: position for position, (key, _) in enumerate(pipeline_stages)
+        }
 
         def update_step(key, state):
             st.session_state.pipeline_steps[key] = state
+            stage_index = stage_positions[key]
+            completed = stage_index + (1 if state == "done" else 0)
+            progress_bar.progress(int(completed / len(pipeline_stages) * 100))
+            stage_label = pipeline_stages[stage_index][1]
+            if state == "done" and completed < len(pipeline_stages):
+                stage_label = pipeline_stages[completed][1]
+            progress_label.caption(
+                f"{stage_label} · {int(completed / len(pipeline_stages) * 100)}%"
+            )
 
         try:
             with progress_placeholder.container():
-                st.info("⚙️ Pipeline running — see sidebar for live status…")
+                st.info("⚙️ Your video is being analysed. This may take a few minutes.")
 
             update_step("audio", "active")
             chunks = process_input(source)
@@ -416,8 +579,10 @@ if run_btn:
             }
             st.session_state.pipeline_done = True
             progress_placeholder.success("✅ Analysis complete!")
+            progress_label.caption("Analysis complete · 100%")
             time.sleep(0.5)
             progress_placeholder.empty()
+            progress_label.empty()
             st.rerun()
 
         except Exception as e:
@@ -429,117 +594,110 @@ if run_btn:
 # ── Results ──────────────────────────────────────────────────────────────────────
 if st.session_state.result:
     r = st.session_state.result
+    overview_tab, transcript_tab, insights_tab, chat_tab = st.tabs(
+        ["✨  Overview", "📝  Transcript", "💡  Insights", "💬  Ask AI"]
+    )
 
-    # Title banner
-    st.markdown(f"""
-    <div class="card">
-        <div class="card-title">📌 Session Title</div>
-        <div style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;color:var(--text)">
-            {r['title']}
-        </div>
-    </div>""", unsafe_allow_html=True)
-
-    # Top row: summary + transcript
-    col1, col2 = st.columns([3, 2], gap="medium")
-
-    with col1:
+    with overview_tab:
         st.markdown(f"""
         <div class="card">
+            <div class="card-title">📌 Session overview</div>
+            <div style="font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:700;color:var(--text);margin-bottom:1.25rem">
+                {r['title']}
+            </div>
             <div class="card-title">📋 Summary</div>
             <div class="card-content">{r['summary']}</div>
         </div>""", unsafe_allow_html=True)
 
-    with col2:
-        with st.expander("📝 Full Transcript", expanded=False):
-            st.markdown(f'<div class="transcript-box">{r["transcript"]}</div>', unsafe_allow_html=True)
+    with transcript_tab:
+        st.markdown('<div class="section-label">Full transcript</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="transcript-box">{r["transcript"]}</div>',
+            unsafe_allow_html=True,
+        )
 
-    # Second row: action items | decisions | questions
-    c1, c2, c3 = st.columns(3, gap="medium")
+    with insights_tab:
+        insight_columns = st.columns(3, gap="medium")
+        for column, title, icon, key in [
+            (insight_columns[0], "Action items", "✅", "action_items"),
+            (insight_columns[1], "Key decisions", "🔑", "key_decisions"),
+            (insight_columns[2], "Open questions", "❓", "open_questions"),
+        ]:
+            with column:
+                st.markdown(f"""
+                <div class="card">
+                    <div class="card-title">{icon} {title}</div>
+                    <div class="card-content">{r[key]}</div>
+                </div>""", unsafe_allow_html=True)
 
-    with c1:
-        st.markdown(f"""
-        <div class="card">
-            <div class="card-title">✅ Action Items</div>
-            <div class="card-content">{r['action_items']}</div>
-        </div>""", unsafe_allow_html=True)
+    with chat_tab:
+        st.markdown(
+            '<div class="section-label">Ask questions about this meeting</div>',
+            unsafe_allow_html=True,
+        )
 
-    with c2:
-        st.markdown(f"""
-        <div class="card">
-            <div class="card-title">🔑 Key Decisions</div>
-            <div class="card-content">{r['key_decisions']}</div>
-        </div>""", unsafe_allow_html=True)
+        if st.session_state.chat_history:
+            chat_html = '<div class="chat-container">'
+            for msg in st.session_state.chat_history:
+                if msg["role"] == "user":
+                    chat_html += f"""
+                    <div class="chat-msg" style="align-items:flex-end">
+                        <span class="chat-label user-label">You</span>
+                        <div class="chat-bubble user-bubble">{msg['content']}</div>
+                    </div>"""
+                else:
+                    chat_html += f"""
+                    <div class="chat-msg" style="align-items:flex-start">
+                        <span class="chat-label bot-label">🤖 Assistant</span>
+                        <div class="chat-bubble bot-bubble">{msg['content']}</div>
+                    </div>"""
+            chat_html += '</div>'
+            st.markdown(chat_html, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="card" style="text-align:center;padding:2rem">
+                <div style="font-size:2rem;margin-bottom:0.5rem">💬</div>
+                <div style="color:var(--text-muted);font-size:0.85rem">Ask anything about your meeting transcript</div>
+            </div>""", unsafe_allow_html=True)
 
-    with c3:
-        st.markdown(f"""
-        <div class="card">
-            <div class="card-title">❓ Open Questions</div>
-            <div class="card-content">{r['open_questions']}</div>
-        </div>""", unsafe_allow_html=True)
+        chat_col1, chat_col2 = st.columns([5, 1], gap="small")
+        with chat_col1:
+            user_input = st.text_input(
+                "Your question",
+                placeholder="What were the main decisions made?",
+                label_visibility="collapsed",
+                key="chat_question",
+            )
+        with chat_col2:
+            send_btn = st.button("Send →", use_container_width=True)
 
-    st.markdown("---")
-
-    # ── RAG Chat ──────────────────────────────────────────────────────────────
-    st.markdown('<div style="font-family:\'Syne\',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:1rem">💬 Chat with your Meeting</div>', unsafe_allow_html=True)
-
-    # Chat history display
-    if st.session_state.chat_history:
-        chat_html = '<div class="chat-container">'
-        for msg in st.session_state.chat_history:
-            if msg["role"] == "user":
-                chat_html += f"""
-                <div class="chat-msg" style="align-items:flex-end">
-                    <span class="chat-label user-label">You</span>
-                    <div class="chat-bubble user-bubble">{msg['content']}</div>
-                </div>"""
-            else:
-                chat_html += f"""
-                <div class="chat-msg" style="align-items:flex-start">
-                    <span class="chat-label bot-label">🤖 Assistant</span>
-                    <div class="chat-bubble bot-bubble">{msg['content']}</div>
-                </div>"""
-        chat_html += '</div>'
-        st.markdown(chat_html, unsafe_allow_html=True)
-    else:
-        st.markdown("""
-        <div class="card" style="text-align:center;padding:2rem">
-            <div style="font-size:2rem;margin-bottom:0.5rem">💬</div>
-            <div style="color:var(--text-muted);font-size:0.85rem">Ask anything about your meeting transcript</div>
-        </div>""", unsafe_allow_html=True)
-
-    # Chat input
-    chat_col1, chat_col2 = st.columns([5, 1], gap="small")
-    with chat_col1:
-        user_input = st.text_input("Your question", placeholder="What were the main decisions made?", label_visibility="collapsed")
-    with chat_col2:
-        send_btn = st.button("Send →", use_container_width=True)
-
-    if send_btn and user_input.strip():
-        with st.spinner("Thinking…"):
-            answer = ask_question(r["rag_chain"], user_input.strip())
-        st.session_state.chat_history.append({"role": "user",      "content": user_input.strip()})
-        st.session_state.chat_history.append({"role": "assistant", "content": answer})
-        st.rerun()
-
-    if st.session_state.chat_history:
-        if st.button("🗑️ Clear Chat", type="secondary"):
-            st.session_state.chat_history = []
+        if send_btn and user_input.strip():
+            with st.spinner("Thinking…"):
+                answer = ask_question(r["rag_chain"], user_input.strip())
+            st.session_state.chat_history.append({"role": "user", "content": user_input.strip()})
+            st.session_state.chat_history.append({"role": "assistant", "content": answer})
             st.rerun()
+
+        if st.session_state.chat_history:
+            if st.button("🗑️ Clear chat", type="secondary"):
+                st.session_state.chat_history = []
+                st.rerun()
 
 else:
     # Empty state
     st.markdown("""
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center">
-        <div style="font-size:4rem;margin-bottom:1rem">🎬</div>
-        <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:0.5rem">
-            Ready to Analyse
+    <div class="card" style="text-align:center;padding:3.5rem 2rem;margin-top:1rem">
+        <div style="font-size:3.25rem;margin-bottom:1rem">🎬</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.65rem;font-weight:700;color:var(--text);margin-bottom:0.65rem">
+            Your next meeting insight starts here
         </div>
-        <div style="color:var(--text-muted);font-size:0.85rem;max-width:380px;line-height:1.7">
-            Paste a YouTube URL or local file path in the sidebar, choose your language, and hit <strong>Analyse</strong> to get started.
+        <div style="color:var(--text-muted);font-size:0.85rem;max-width:460px;line-height:1.8;margin:0 auto">
+            Add a YouTube link or video file in the sidebar. We’ll create a transcript,
+            surface the important moments, and let you ask follow-up questions.
         </div>
-        <div style="margin-top:2rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
-            <span class="badge badge-purple">Transcription</span>
-            <span class="badge badge-cyan">Summarisation</span>
-            <span class="badge badge-green">RAG Chat</span>
+        <div style="margin-top:2rem;display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center">
+            <span class="badge badge-purple">01 · Transcribe</span>
+            <span class="badge badge-cyan">02 · Summarise</span>
+            <span class="badge badge-green">03 · Ask AI</span>
         </div>
     </div>""", unsafe_allow_html=True)
